@@ -1,0 +1,16 @@
+{
+  "name": "xyz-bank",
+  "version": "1.0.0",
+  "description": "Bank testing challenge",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test"
+  },
+  "author": "Aleksa Tvrdisic",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.9.1"
+  }
+}
