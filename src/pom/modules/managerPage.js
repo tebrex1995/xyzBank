@@ -49,6 +49,8 @@ export class ManagerPage extends Homepage {
   }
 
   async addCustomer() {
+    await this.checkAlertDialog(ALERTS['customerCreated']);
+
     await this.addCustomerBtn.click();
     await this.firstNameInputField.fill(
       CUSTOMER_DATA['validData']['firstName']
@@ -56,6 +58,8 @@ export class ManagerPage extends Homepage {
     await this.lastNameInputField.fill(CUSTOMER_DATA['validData']['lastName']);
     await this.postCodeInputField.fill(CUSTOMER_DATA['validData']['postCode']);
     await this.formSubmitBtn.click();
+
+    await this.page.removeAllListeners('dialog');
   }
 
   //Delete customer as manager
@@ -80,16 +84,14 @@ export class ManagerPage extends Homepage {
     );
   }
 
-  async openAccounts() {
+  async openAccount() {
     await this.openAccountBtn.click();
     this.checkAlertDialog(ALERTS['accountCreatedSuccessfully']);
-
     for (const curr of this.currencies) {
       await this.selectUser();
       await this.page.selectOption(this.selectCurrencyDropdown, `${curr}`);
 
       await this.submitCurrencyBtn.click();
-      await this.page.waitForTimeout(5000);
     }
     this.page.removeAllListeners('dialog');
   }

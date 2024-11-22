@@ -26,8 +26,7 @@ test.describe('Verify manager can create customer successfully', () => {
 
       //Asserts
       await managerPage.verifyManagerLogin();
-      //Alert dialog
-      await managerPage.checkAlertDialog(ALERTS['customerCreated']);
+
       //Add new customer
       await managerPage.addCustomer();
     }
@@ -42,7 +41,7 @@ test.describe('Verify manager can create customer successfully', () => {
   });
 
   test('Manager should be able to open an account', async () => {
-    await managerPage.openAccounts();
+    await managerPage.openAccount();
   });
 
   // test.afterEach('Customer should be deleted successfully', async () => {
