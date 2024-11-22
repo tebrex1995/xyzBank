@@ -9,6 +9,7 @@ const MANAGER_PAGE = {
   addCustomerText: 'Add Customer',
   openAccountText: 'Open Account',
   customerListText: 'Customers',
+  deleteCustomer: 'Delete',
 };
 
 const ALERTS = {
