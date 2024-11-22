@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { Homepage } from './homePage';
-import { CUSTOMER_DATA, MANAGER_PAGE } from '../../fixtures';
+import { ALERTS, CUSTOMER_DATA, MANAGER_PAGE } from '../../fixtures';
 
 export class ManagerPage extends Homepage {
   constructor(page) {
@@ -16,6 +16,9 @@ export class ManagerPage extends Homepage {
       name: MANAGER_PAGE['customerListText'],
     });
     this.formSubmitBtn = this.addCustomerBtn.last();
+    this.submitCurrencyBtn = page.getByRole('button', {
+      name: MANAGER_PAGE['submitCurrencyButton'],
+    });
 
     //Create customer => Input fields
     this.firstNameInputField = page.getByPlaceholder('First Name');
@@ -23,8 +26,9 @@ export class ManagerPage extends Homepage {
     this.postCodeInputField = page.getByPlaceholder('Post Code');
 
     //Create account => Dropdowns
-    this.selectUser = page.locator('#userSelect');
-    this.selectCurrency = page.locator('#currency');
+    this.selectUserDropdown = '#userSelect';
+    this.selectCurrencyDropdown = ' #currency';
+    this.currencies = ['Dollar', 'Pound', 'Rupee'];
 
     //Customers List
     this.trLocator = page.locator('tr');
@@ -33,9 +37,17 @@ export class ManagerPage extends Homepage {
     this.lastTableRow = page.locator('table tr').last();
     this.deleteBtn = this.lastTableRow.getByRole('button');
     this.searchBar = page.getByPlaceholder('Search Customer');
+    this.firstNameColumn = page.locator('tr td.ng-binding').first();
+    this.lastNameColumn = page.locator('tr td.ng-binding').nth(1);
+    this.postCodeColumn = page.locator('tr td.ng-binding').nth(2);
+    this.accountsColumn = page.locator('tr td.ng-binding').nth(3);
   }
 
   //Funcional methods
+  async managerLogin() {
+    await this.managerLoginBtn.click();
+  }
+
   async addCustomer() {
     await this.addCustomerBtn.click();
     await this.firstNameInputField.fill(
@@ -46,20 +58,40 @@ export class ManagerPage extends Homepage {
     await this.formSubmitBtn.click();
   }
 
+  //Delete customer as manager
   async deleteCustomer() {
     await this.customersListBtn.click();
     await expect(this.deleteBtn).toHaveText(MANAGER_PAGE['deleteCustomer']);
     await this.deleteBtn.click();
   }
 
+  //Search Customer as manager
   async searchCustomer(customerName) {
     await this.customersListBtn.click();
     await this.searchBar.click();
     await this.searchBar.fill(customerName);
   }
 
-  async managerLogin() {
-    await this.managerLoginBtn.click();
+  //Select user from dropdown in open accounts page
+  async selectUser() {
+    await this.page.selectOption(
+      this.selectUserDropdown,
+      `${CUSTOMER_DATA['validData']['firstName']} ${CUSTOMER_DATA['validData']['lastName']}`
+    );
+  }
+
+  async openAccounts() {
+    await this.openAccountBtn.click();
+    this.checkAlertDialog(ALERTS['accountCreatedSuccessfully']);
+
+    for (const curr of this.currencies) {
+      await this.selectUser();
+      await this.page.selectOption(this.selectCurrencyDropdown, `${curr}`);
+
+      await this.submitCurrencyBtn.click();
+      await this.page.waitForTimeout(5000);
+    }
+    this.page.removeAllListeners('dialog');
   }
 
   //TODO:
@@ -67,14 +99,15 @@ export class ManagerPage extends Homepage {
 
   //Other test methods
 
+  //Check alert dialog and close it
   async checkAlertDialog(message) {
-    //Alert dialog
     this.page.on('dialog', async dialog => {
       expect(dialog.message()).toContain(message);
       await dialog.accept();
     });
   }
 
+  //Get users information from local storage
   async getCustomerFromLocalStorage() {
     const customerInfo = await this.page.evaluate(() => {
       return window.localStorage.getItem('User').last();
@@ -82,6 +115,7 @@ export class ManagerPage extends Homepage {
     return customerInfo;
   }
 
+  //Assertions of manager login
   async verifyManagerLogin() {
     await expect(this.addCustomerBtn).toBeVisible();
     await expect(this.openAccountBtn).toBeVisible();
@@ -95,5 +129,19 @@ export class ManagerPage extends Homepage {
     await expect(this.customersListBtn).toHaveText(
       MANAGER_PAGE['customerListText']
     );
+  }
+
+  //Assertions of search result
+  async verifySearchResult() {
+    await expect(this.firstNameColumn).toHaveText(
+      CUSTOMER_DATA['validData']['firstName']
+    );
+    await expect(this.lastNameColumn).toHaveText(
+      CUSTOMER_DATA['validData']['lastName']
+    );
+    await expect(this.postCodeColumn).toHaveText(
+      CUSTOMER_DATA['validData']['postCode']
+    );
+    await expect(this.trLocator).toHaveCount(this.oneCustomerFoundTable);
   }
 }
