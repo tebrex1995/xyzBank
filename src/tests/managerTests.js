@@ -1,10 +1,10 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import { Homepage, ManagerPage } from '../pom/modules';
-import { CUSTOMER_DATA, HOMEPAGE, KEYS, URLS } from '../fixtures';
+import { ALERTS, CUSTOMER_DATA, HOMEPAGE, KEYS, URLS } from '../fixtures';
 
 test.describe('Verify manager can create customer successfully', () => {
-  let homepage, managerPage;
+  let homepage, managerPage, oldLastUserId;
 
   test.beforeEach(
     'Home page should be loaded and manager should be logged in successfully',
@@ -25,13 +25,28 @@ test.describe('Verify manager can create customer successfully', () => {
       await managerPage.managerLogin();
 
       await managerPage.verifyManagerLogin();
-      const oldLastUserId = await managerPage.getLastUserId();
+      oldLastUserId = await managerPage.getLastUserId();
 
       //Add new customer
       await managerPage.addCustomer();
       await managerPage.verifyUserCreating(oldLastUserId);
     }
   );
+
+  test.afterEach('Customer should be deleted successfully', async () => {
+    //Delete customer
+    try {
+      if ((await managerPage.getLastUserId()) > oldLastUserId) {
+        await managerPage.deleteCustomer();
+        await expect(managerPage['trLocator']).toHaveCount(
+          managerPage['baseCustomerNumber']
+        );
+      }
+    } catch (error) {
+      console.error('Error during customer deletion:', error);
+      throw error;
+    }
+  });
 
   test('Customer should be able to be found on search bar', async () => {
     await managerPage.searchCustomer(CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']);
@@ -49,11 +64,7 @@ test.describe('Verify manager can create customer successfully', () => {
     );
   });
 
-  test.afterEach('Customer should be deleted successfully', async () => {
-    //Delete customer
-    await managerPage.deleteCustomer();
-    await expect(managerPage['trLocator']).toHaveCount(
-      managerPage['baseCustomerNumber']
-    );
+  test('Duplicated customer should not be able to get created', async () => {
+    await managerPage.addCustomer({ alertMsg: ALERTS['duplicateCustomer'] });
   });
 });

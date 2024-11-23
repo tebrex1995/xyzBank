@@ -12,17 +12,14 @@ export class ManagerPage extends Homepage {
   constructor(page) {
     super(page);
     //Buttons
-    this.addCustomerBtn = page.getByRole('button', {
-      name: MANAGER_PAGE['addCustomerText'],
-    });
-    this.openAccountBtn = page.getByRole('button', {
-      name: MANAGER_PAGE['openAccountText'],
-    });
-    this.customersListBtn = page.getByRole('button', {
-      name: MANAGER_PAGE['customerListText'],
-    });
-    this.formSubmitBtn = this.addCustomerBtn.last();
-    this.submitCurrencyBtn = page.getByRole('button', {
+    this.addCustomerBtn = page.locator('button[ng-click="addCust()"]');
+    this.openAccountBtn = page.locator('button[ng-click="openAccount()"]');
+    this.customersListBtn = page.locator('button[ng-click="showCust()"]');
+    this.formSubmitBtn = page
+      .locator('form')
+      .locator('button', { name: MANAGER_PAGE['addCustomerText'] });
+
+    this.submitCurrencyBtn = page.getByRole('form').getByRole('button', {
       name: MANAGER_PAGE['submitCurrencyButton'],
     });
 
@@ -54,21 +51,19 @@ export class ManagerPage extends Homepage {
     await this.managerLoginBtn.click();
   }
 
-  async addCustomer() {
-    await this.checkAlertDialog(ALERTS['customerCreated']);
+  async addCustomer({
+    firstName = CUSTOMER_DATA['VALID_DATA']['FIRST_NAME'],
+    lastName = CUSTOMER_DATA['VALID_DATA']['LAST_NAME'],
+    postCode = CUSTOMER_DATA['VALID_DATA']['POST_CODE'],
+    alertMsg = ALERTS['customerCreated'],
+  } = {}) {
+    await this.checkAlertDialog(alertMsg);
 
     await this.addCustomerBtn.click();
-    await this.firstNameInputField.fill(
-      CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']
-    );
-    await this.lastNameInputField.fill(
-      CUSTOMER_DATA['VALID_DATA']['LAST_NAME']
-    );
-    await this.postCodeInputField.fill(
-      CUSTOMER_DATA['VALID_DATA']['POST_CODE']
-    );
+    await this.firstNameInputField.fill(firstName);
+    await this.lastNameInputField.fill(lastName);
+    await this.postCodeInputField.fill(postCode);
     await this.formSubmitBtn.click();
-
     await this.page.removeAllListeners('dialog');
   }
 

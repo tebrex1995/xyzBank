@@ -1,8 +1,17 @@
+import { ALERTS } from './pageTextValues';
+
 const CUSTOMER_DATA = {
   VALID_DATA: {
     FIRST_NAME: 'Aleksa',
     LAST_NAME: 'Tvrdisic',
     POST_CODE: '21000',
+  },
+
+  EXISTING_CUSTOMER: {
+    FIRST_NAME: 'Harry',
+    LAST_NAME: 'Potter',
+    POST_CODE: 'E725JB',
+    ALERT_MESSAGE: ALERTS['duplicateCustomer'],
   },
 };
 
