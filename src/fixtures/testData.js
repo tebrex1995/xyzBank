@@ -1,11 +1,23 @@
-import { generateRandomNumber, generateRandomString } from './utils';
-
 const CUSTOMER_DATA = {
-  validData: {
-    firstName: 'Aleksa',
-    lastName: 'Tvrdisic',
-    postCode: '21000',
+  VALID_DATA: {
+    FIRST_NAME: 'Aleksa',
+    LAST_NAME: 'Tvrdisic',
+    POST_CODE: '21000',
   },
 };
 
-export { CUSTOMER_DATA };
+const KEYS = {
+  MAX_USER_ID: 'maxUserId',
+  USERS: 'User',
+  TRANSACTIONS: 'Transactions',
+  MAX_ACCOUNT_NO: 'maxAccountNo',
+  USER_KEYS: {
+    FIRST_NAME: 'fName',
+    LAST_NAME: 'lName',
+    POST_CODE: 'postCd',
+    ID: 'id',
+    ACCOUNT_NO: 'accountNo',
+  },
+};
+
+export { CUSTOMER_DATA, KEYS };

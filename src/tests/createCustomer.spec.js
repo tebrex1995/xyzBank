@@ -1,7 +1,7 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 import { Homepage, ManagerPage } from '../pom/modules';
-import { ALERTS, CUSTOMER_DATA, HOMEPAGE, URLS } from '../fixtures';
+import { CUSTOMER_DATA, HOMEPAGE, KEYS, URLS } from '../fixtures';
 
 test.describe('Verify manager can create customer successfully', () => {
   let homepage, managerPage;
@@ -24,16 +24,17 @@ test.describe('Verify manager can create customer successfully', () => {
       //Login as Manager
       await managerPage.managerLogin();
 
-      //Asserts
       await managerPage.verifyManagerLogin();
+      const oldLastUserId = await managerPage.getLastUserId();
 
       //Add new customer
       await managerPage.addCustomer();
+      await managerPage.verifyUserCreating(oldLastUserId);
     }
   );
 
   test('Customer should be able to be found on search bar', async () => {
-    await managerPage.searchCustomer(CUSTOMER_DATA['validData']['firstName']);
+    await managerPage.searchCustomer(CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']);
     await managerPage.verifySearchResult();
 
     //Clear search bar
@@ -41,14 +42,18 @@ test.describe('Verify manager can create customer successfully', () => {
   });
 
   test('Manager should be able to open an account', async () => {
-    await managerPage.openAccount();
+    const accountNumbers = await managerPage.openAccount();
+    const lastUser = await managerPage.getLastUser();
+    expect(await accountNumbers).toEqual(
+      await lastUser[KEYS['USER_KEYS']['ACCOUNT_NO']]
+    );
   });
 
-  // test.afterEach('Customer should be deleted successfully', async () => {
-  //   //Delete customer
-  //   await managerPage.deleteCustomer();
-  //   await expect(managerPage['trLocator']).toHaveCount(
-  //     managerPage['baseCustomerNumber']
-  //   );
-  // });
+  test.afterEach('Customer should be deleted successfully', async () => {
+    //Delete customer
+    await managerPage.deleteCustomer();
+    await expect(managerPage['trLocator']).toHaveCount(
+      managerPage['baseCustomerNumber']
+    );
+  });
 });

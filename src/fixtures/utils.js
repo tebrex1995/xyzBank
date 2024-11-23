@@ -13,4 +13,23 @@ const generateRandomNumber = max => {
   return Math.floor(Math.random() * (max - 1) + 1);
 };
 
-export { generateRandomNumber, generateRandomString };
+const getDataFromLocalStorage = (page, storageKey) => {
+  const customerInfo = page.evaluate(key => {
+    const item = window.localStorage.getItem(key);
+    const parsed = JSON.parse(item);
+    return parsed;
+  }, storageKey);
+  return customerInfo;
+};
+
+const lastObjectVal = obj => {
+  const values = Object.values(obj);
+  return values[values.length - 1];
+};
+
+export {
+  generateRandomNumber,
+  generateRandomString,
+  getDataFromLocalStorage,
+  lastObjectVal,
+};

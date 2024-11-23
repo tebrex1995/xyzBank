@@ -1,6 +1,12 @@
 import { expect } from '@playwright/test';
 import { Homepage } from './homePage';
-import { ALERTS, CUSTOMER_DATA, MANAGER_PAGE } from '../../fixtures';
+import {
+  ALERTS,
+  CUSTOMER_DATA,
+  MANAGER_PAGE,
+  utils,
+  KEYS,
+} from '../../fixtures';
 
 export class ManagerPage extends Homepage {
   constructor(page) {
@@ -53,10 +59,14 @@ export class ManagerPage extends Homepage {
 
     await this.addCustomerBtn.click();
     await this.firstNameInputField.fill(
-      CUSTOMER_DATA['validData']['firstName']
+      CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']
     );
-    await this.lastNameInputField.fill(CUSTOMER_DATA['validData']['lastName']);
-    await this.postCodeInputField.fill(CUSTOMER_DATA['validData']['postCode']);
+    await this.lastNameInputField.fill(
+      CUSTOMER_DATA['VALID_DATA']['LAST_NAME']
+    );
+    await this.postCodeInputField.fill(
+      CUSTOMER_DATA['VALID_DATA']['POST_CODE']
+    );
     await this.formSubmitBtn.click();
 
     await this.page.removeAllListeners('dialog');
@@ -80,24 +90,53 @@ export class ManagerPage extends Homepage {
   async selectUser() {
     await this.page.selectOption(
       this.selectUserDropdown,
-      `${CUSTOMER_DATA['validData']['firstName']} ${CUSTOMER_DATA['validData']['lastName']}`
+      `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
     );
   }
 
+  //Open customers account
   async openAccount() {
+    let accountNumbers = [];
     await this.openAccountBtn.click();
     this.checkAlertDialog(ALERTS['accountCreatedSuccessfully']);
     for (const curr of this.currencies) {
       await this.selectUser();
       await this.page.selectOption(this.selectCurrencyDropdown, `${curr}`);
-
       await this.submitCurrencyBtn.click();
+      const lastAccNumber = await this.getLastAccount();
+      accountNumbers.push(await lastAccNumber);
     }
     this.page.removeAllListeners('dialog');
+    return accountNumbers;
   }
 
-  //TODO:
-  //Write random data in file with fs and read it in addCustomer
+  async getLastAccount() {
+    const lastAccountNumber = await utils.getDataFromLocalStorage(
+      this.page,
+      KEYS['MAX_ACCOUNT_NO']
+    );
+    return lastAccountNumber;
+  }
+
+  //Get last user
+  async getLastUser() {
+    const customerObject = await utils.getDataFromLocalStorage(
+      this.page,
+      KEYS['USERS']
+    );
+    const newCustomer = await utils.lastObjectVal(customerObject);
+
+    return newCustomer;
+  }
+
+  //Get max user ID
+  async getLastUserId() {
+    const lastUserId = await utils.getDataFromLocalStorage(
+      this.page,
+      KEYS['MAX_USER_ID']
+    );
+    return lastUserId;
+  }
 
   //Other test methods
 
@@ -107,14 +146,6 @@ export class ManagerPage extends Homepage {
       expect(dialog.message()).toContain(message);
       await dialog.accept();
     });
-  }
-
-  //Get users information from local storage
-  async getCustomerFromLocalStorage() {
-    const customerInfo = await this.page.evaluate(() => {
-      return window.localStorage.getItem('User').last();
-    });
-    return customerInfo;
   }
 
   //Assertions of manager login
@@ -136,14 +167,37 @@ export class ManagerPage extends Homepage {
   //Assertions of search result
   async verifySearchResult() {
     await expect(this.firstNameColumn).toHaveText(
-      CUSTOMER_DATA['validData']['firstName']
+      CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']
     );
     await expect(this.lastNameColumn).toHaveText(
-      CUSTOMER_DATA['validData']['lastName']
+      CUSTOMER_DATA['VALID_DATA']['LAST_NAME']
     );
     await expect(this.postCodeColumn).toHaveText(
-      CUSTOMER_DATA['validData']['postCode']
+      CUSTOMER_DATA['VALID_DATA']['POST_CODE']
     );
     await expect(this.trLocator).toHaveCount(this.oneCustomerFoundTable);
+  }
+
+  //Assert user creation
+  async verifyUserCreating(oldLastUserId) {
+    const newUserId = await this.getLastUserId();
+
+    const newCustomer = await this.getLastUser();
+
+    expect(await newCustomer[KEYS['USER_KEYS']['FIRST_NAME']]).toBe(
+      CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']
+    );
+
+    expect(await newCustomer[KEYS['USER_KEYS']['LAST_NAME']]).toBe(
+      CUSTOMER_DATA['VALID_DATA']['LAST_NAME']
+    );
+
+    expect(await newCustomer[KEYS['USER_KEYS']['POST_CODE']]).toBe(
+      CUSTOMER_DATA['VALID_DATA']['POST_CODE']
+    );
+
+    expect(await newCustomer).toHaveProperty('id');
+
+    expect(await newUserId).toBeGreaterThan(oldLastUserId);
   }
 }
