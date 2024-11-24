@@ -16,6 +16,8 @@ const MANAGER_PAGE = {
 const CUSTOMER_PAGE = {
   YOUR_NAME_LABEL: 'Your Name :',
   LOGIN_BUTTON: 'Login',
+  NO_ACCOUNT_MESSAGE: 'Please open an account with us.',
+  WELCOME: ' Welcome ',
 };
 
 const ALERTS = {

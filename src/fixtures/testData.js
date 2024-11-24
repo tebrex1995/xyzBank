@@ -27,6 +27,8 @@ const KEYS = {
     ID: 'id',
     ACCOUNT_NO: 'accountNo',
   },
+  CURRENT_USER: 'CurrentUser',
+  CURRENT_ACCOUNT: 'CurrentAccount',
 };
 
 export { CUSTOMER_DATA, KEYS };

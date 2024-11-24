@@ -7,6 +7,7 @@ import {
   utils,
   KEYS,
   selectUser,
+  ENDPOINTS,
 } from '../../fixtures';
 
 export class ManagerPage extends Homepage {
@@ -85,6 +86,9 @@ export class ManagerPage extends Homepage {
 
   //Open customers account
   async openAccount() {
+    if (this.page.url() !== ENDPOINTS['OPEN_ACCOUNT']) {
+      this.page.goto(ENDPOINTS['OPEN_ACCOUNT']);
+    }
     let accountNumbers = [];
     await this.openAccountBtn.click();
     this.checkAlertDialog(ALERTS['ACCOUNT_CREATED']);
