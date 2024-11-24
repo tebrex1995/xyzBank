@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   CUSTOMER_DATA,
   CUSTOMER_PAGE,
+  ENDPOINTS,
   setupManager,
   teardownManager,
 } from '../fixtures';
@@ -10,7 +11,7 @@ import { CustomersPage } from '../pom/modules/';
 test.describe('Customer tests', () => {
   let customersPage, managerPage, homepage, oldLastUserId;
 
-  test.beforeAll(
+  test.beforeEach(
     'Home page should be loaded and manager should be logged in successfully',
     async ({ page }) => {
       const setup = await setupManager(page);
@@ -21,17 +22,15 @@ test.describe('Customer tests', () => {
     }
   );
 
-  test.afterEach('Logout user successfully', async () => {
+  test.afterEach('Logout user successfully', async ({ page }) => {
     await customersPage.logoutCustomer();
-  });
-
-  test.afterAll('Customer should be deleted successfully', async ({ page }) => {
     await teardownManager(page, managerPage, oldLastUserId);
   });
 
   test('Customer should be able to login', async () => {
     await customersPage.customerLogin();
     const loggedUser = await customersPage.getCurrentUser();
+
     expect(await loggedUser['fName']).toBe(
       CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']
     );
@@ -59,15 +58,20 @@ test.describe('Customer tests', () => {
     );
   });
 
-  test('Customer should have visible buttons and accounts if he has accounts', async () => {
+  test('Customer should have visible buttons and accounts if he has accounts', async ({
+    page,
+  }) => {
+    await page.goto(ENDPOINTS['OPEN_ACCOUNT']);
     await managerPage.openAccount();
     await customersPage.customerLogin();
     await customersPage.verifyLoginWithAccount();
   });
 
   test('Customer should have added accounts in account select dropdown', async () => {
+    await managerPage.openAccount();
     await customersPage.customerLogin();
-    const loggedUser = await customersPage.getCurrentUser();
-    console.log(loggedUser);
+
+    const accountsMatch = await customersPage.compareOptionsWithLocalStorage();
+    expect(accountsMatch).toBe(true);
   });
 });

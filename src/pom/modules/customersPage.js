@@ -42,14 +42,23 @@ export class CustomersPage extends Homepage {
   }
 
   //Get current logged in user from local storage
-
   async getCurrentUser() {
     const loggedUser = await utils.getDataFromLocalStorage(
       this.page,
       KEYS['CURRENT_USER']
     );
-    return loggedUser;
+    return await loggedUser;
   }
+
+  //Get current users accounts
+  async getCurrentAccount() {
+    const usersAccount = await utils.getDataFromLocalStorage(
+      this.page,
+      KEYS['CURRENT_ACCOUNT']
+    );
+    return await usersAccount;
+  }
+
   //Check if user is on the customer login page
   async loginCheck() {
     if (this.page.url() !== `${ENDPOINTS['CUSTOMER']}`)
@@ -62,6 +71,35 @@ export class CustomersPage extends Homepage {
       await this.logoutBtn.click();
     }
   }
+
+  //Return array of options in accounts dropdown
+  async compareOptionsWithLocalStorage() {
+    //Declare accounts var as an empty array
+    let accounts = [];
+    //Get currentUser data
+    const currentUser = await this.getCurrentUser();
+
+    //Get all storage accounts (returns array)
+    const storageAccounts = await currentUser.accountNo;
+
+    //Loop through storage accounts to check if they match and push in accounts array
+    for (const account of storageAccounts) {
+      const option = await this.page.selectOption(
+        this.accountSelect,
+        `${account}`
+      );
+      //Returns an array with 1 element.Get first element split and take second el wich is number, then turn it to number
+      const accountNo = Number(option[0].split(':')[1]);
+      accounts.push(accountNo);
+    }
+
+    //Return true if number of elements in array matches and if numbers match
+    const areEqual = await utils.arraysAreEqual(accounts, storageAccounts);
+    return areEqual;
+  }
+
+  //Return array of users accounts in local storage
+  async getLocalStorageAccounts() {}
 
   //Assertion methods
   async verifyLoginWithAccount() {

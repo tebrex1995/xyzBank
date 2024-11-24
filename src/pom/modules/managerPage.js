@@ -85,13 +85,19 @@ export class ManagerPage extends Homepage {
   }
 
   //Open customers account
-  async openAccount() {
+  async checkOpenAccountUrl() {
     if (this.page.url() !== ENDPOINTS['OPEN_ACCOUNT']) {
       this.page.goto(ENDPOINTS['OPEN_ACCOUNT']);
     }
-    let accountNumbers = [];
+  }
+
+  async openAccount() {
     await this.openAccountBtn.click();
+
+    let accountNumbers = [];
+
     this.checkAlertDialog(ALERTS['ACCOUNT_CREATED']);
+
     for (const curr of this.currencies) {
       await selectUser(this.page);
       await this.page.selectOption(this.selectCurrencyDropdown, `${curr}`);
@@ -99,7 +105,9 @@ export class ManagerPage extends Homepage {
       const lastAccNumber = await this.getLastAccount();
       accountNumbers.push(await lastAccNumber);
     }
+
     this.page.removeAllListeners('dialog');
+
     return accountNumbers;
   }
 
