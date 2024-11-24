@@ -15,8 +15,6 @@ export default defineConfig({
   reporter: 'html',
 
   use: {
-    testIdAttribute: 'fdprocessedid',
-
     baseURL: 'https://www.globalsqa.com',
 
     trace: 'on-first-retry',

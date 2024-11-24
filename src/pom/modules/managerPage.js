@@ -6,6 +6,7 @@ import {
   MANAGER_PAGE,
   utils,
   KEYS,
+  selectUser,
 } from '../../fixtures';
 
 export class ManagerPage extends Homepage {
@@ -17,10 +18,10 @@ export class ManagerPage extends Homepage {
     this.customersListBtn = page.locator('button[ng-click="showCust()"]');
     this.formSubmitBtn = page
       .locator('form')
-      .locator('button', { name: MANAGER_PAGE['addCustomerText'] });
+      .locator('button', { name: MANAGER_PAGE['ADD_CUSTOMER_TEXT'] });
 
     this.submitCurrencyBtn = page.getByRole('form').getByRole('button', {
-      name: MANAGER_PAGE['submitCurrencyButton'],
+      name: MANAGER_PAGE['SUBMIT_CURR_BTN_TEXT'],
     });
 
     //Create customer => Input fields
@@ -29,7 +30,6 @@ export class ManagerPage extends Homepage {
     this.postCodeInputField = page.getByPlaceholder('Post Code');
 
     //Create account => Dropdowns
-    this.selectUserDropdown = '#userSelect';
     this.selectCurrencyDropdown = ' #currency';
     this.currencies = ['Dollar', 'Pound', 'Rupee'];
 
@@ -55,7 +55,7 @@ export class ManagerPage extends Homepage {
     firstName = CUSTOMER_DATA['VALID_DATA']['FIRST_NAME'],
     lastName = CUSTOMER_DATA['VALID_DATA']['LAST_NAME'],
     postCode = CUSTOMER_DATA['VALID_DATA']['POST_CODE'],
-    alertMsg = ALERTS['customerCreated'],
+    alertMsg = ALERTS['CUSTOMER_CREATED'],
   } = {}) {
     await this.checkAlertDialog(alertMsg);
 
@@ -70,7 +70,9 @@ export class ManagerPage extends Homepage {
   //Delete customer as manager
   async deleteCustomer() {
     await this.customersListBtn.click();
-    await expect(this.deleteBtn).toHaveText(MANAGER_PAGE['deleteCustomer']);
+    await expect(this.deleteBtn).toHaveText(
+      MANAGER_PAGE['DELETE_CUSTOMER_TEXT']
+    );
     await this.deleteBtn.click();
   }
 
@@ -81,21 +83,13 @@ export class ManagerPage extends Homepage {
     await this.searchBar.fill(customerName);
   }
 
-  //Select user from dropdown in open accounts page
-  async selectUser() {
-    await this.page.selectOption(
-      this.selectUserDropdown,
-      `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
-    );
-  }
-
   //Open customers account
   async openAccount() {
     let accountNumbers = [];
     await this.openAccountBtn.click();
-    this.checkAlertDialog(ALERTS['accountCreatedSuccessfully']);
+    this.checkAlertDialog(ALERTS['ACCOUNT_CREATED']);
     for (const curr of this.currencies) {
-      await this.selectUser();
+      await selectUser(this.page);
       await this.page.selectOption(this.selectCurrencyDropdown, `${curr}`);
       await this.submitCurrencyBtn.click();
       const lastAccNumber = await this.getLastAccount();
@@ -105,6 +99,7 @@ export class ManagerPage extends Homepage {
     return accountNumbers;
   }
 
+  //Get last opened account from local storage
   async getLastAccount() {
     const lastAccountNumber = await utils.getDataFromLocalStorage(
       this.page,
@@ -149,13 +144,11 @@ export class ManagerPage extends Homepage {
     await expect(this.openAccountBtn).toBeVisible();
     await expect(this.customersListBtn).toBeVisible();
     await expect(this.addCustomerBtn).toHaveText(
-      MANAGER_PAGE['addCustomerText']
+      MANAGER_PAGE['ADD_CUSTOMER_TEXT']
     );
-    await expect(this.openAccountBtn).toHaveText(
-      MANAGER_PAGE['openAccountText']
-    );
+    await expect(this.openAccountBtn).toHaveText(MANAGER_PAGE['OPEN_ACC_TEXT']);
     await expect(this.customersListBtn).toHaveText(
-      MANAGER_PAGE['customerListText']
+      MANAGER_PAGE['CUSTOMER_LIST_TEXT']
     );
   }
 

@@ -11,7 +11,7 @@ const CUSTOMER_DATA = {
     FIRST_NAME: 'Harry',
     LAST_NAME: 'Potter',
     POST_CODE: 'E725JB',
-    ALERT_MESSAGE: ALERTS['duplicateCustomer'],
+    ALERT_MESSAGE: ALERTS['DUPLICATE_CUSTOMER'],
   },
 };
 

@@ -2,4 +2,10 @@ const URLS = {
   baseUrl: '/angularJs-protractor/BankingProject/',
 };
 
-export { URLS };
+const ENDPOINTS = {
+  CUSTOMER: `${URLS['baseUrl']}#/customer`,
+  LOGGED_CUSTOMER: `${URLS['baseUrl']}#/account`,
+  CUSTOMER_LIST: `${URLS['baseUrl']}#/manager/list`,
+};
+
+export { URLS, ENDPOINTS };
