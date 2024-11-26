@@ -1,9 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {
-  CUSTOMER_PAGE,
-  setupTransactionsCustomer,
-  TRANSACTIONS,
-} from '../fixtures';
+import { CUSTOMER_PAGE, setupTransactionsCustomer } from '../fixtures';
 
 test.describe('Verify transactions work as expected', () => {
   let context, page, customersPage, managerPage, transactions;
