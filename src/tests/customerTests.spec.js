@@ -8,7 +8,7 @@ import {
 } from '../fixtures';
 import { CustomersPage } from '../pom/modules/';
 
-test.describe('Customer tests', () => {
+test.describe('Verify customer can login and make accounts', () => {
   let customersPage, managerPage, homepage, oldLastUserId;
 
   test.beforeEach(

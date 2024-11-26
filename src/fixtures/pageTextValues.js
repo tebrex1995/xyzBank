@@ -18,6 +18,14 @@ const CUSTOMER_PAGE = {
   LOGIN_BUTTON: 'Login',
   NO_ACCOUNT_MESSAGE: 'Please open an account with us.',
   WELCOME: ' Welcome ',
+  WITHDRAW_LABEL: 'Amount to be Withdrawn :',
+  DEPOSIT_LABEL: 'Amount to be Deposited :',
+  WITHDRAW_MORE:
+    'Transaction Failed. You can not withdraw amount more than the balance.',
+  TRANSACTION_SUCCESSFULL: 'Transaction successful',
+  DEPOSIT_SUCCESSFULL: 'Deposit Successful',
+  WITHDRAW_BTN_TEXT: 'Withdraw',
+  DEPOSIT_BTN_TEXT: 'Deposit',
 };
 
 const ALERTS = {

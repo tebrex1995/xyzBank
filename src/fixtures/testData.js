@@ -1,4 +1,5 @@
 import { ALERTS } from './pageTextValues';
+import { generateRandomNumberInRange } from './utils';
 
 const CUSTOMER_DATA = {
   VALID_DATA: {
@@ -15,10 +16,26 @@ const CUSTOMER_DATA = {
   },
 };
 
+const TRANSACTIONS = (() => {
+  let cachedDepositValue = null;
+
+  return {
+    get DEPOSIT_VALUE() {
+      if (cachedDepositValue === null) {
+        cachedDepositValue = generateRandomNumberInRange(500, 1000);
+      }
+      return cachedDepositValue;
+    },
+    get LOWER_DEPOSIT_VALUE() {
+      return this.DEPOSIT_VALUE - generateRandomNumberInRange(100, 300);
+    },
+  };
+})();
+
 const KEYS = {
   MAX_USER_ID: 'maxUserId',
   USERS: 'User',
-  TRANSACTIONS: 'Transactions',
+  TRANSACTIONS: 'Transaction',
   MAX_ACCOUNT_NO: 'maxAccountNo',
   USER_KEYS: {
     FIRST_NAME: 'fName',
@@ -31,4 +48,4 @@ const KEYS = {
   CURRENT_ACCOUNT: 'CurrentAccount',
 };
 
-export { CUSTOMER_DATA, KEYS };
+export { CUSTOMER_DATA, KEYS, TRANSACTIONS };

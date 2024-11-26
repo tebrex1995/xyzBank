@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Homepage, ManagerPage } from '../pom/modules';
+import { Homepage, ManagerPage, Transactions } from '../pom/modules';
 import { URLS, HOMEPAGE, CUSTOMER_DATA, ENDPOINTS } from '../fixtures';
 import { CustomersPage } from '../pom/modules/customersPage';
 
@@ -24,7 +24,7 @@ const setupManager = async page => {
   await managerPage.verifyManagerLogin();
 
   // Get the last user ID
-  const oldLastUserId = await managerPage.getLastUserId();
+  const oldLastUserId = await managerPage.getId();
 
   // Add a new customer
   await managerPage.addCustomer();
@@ -39,7 +39,7 @@ const teardownManager = async (page, managerPage, oldLastUserId) => {
 
   //Delete customer
   try {
-    if ((await managerPage.getLastUserId()) > oldLastUserId) {
+    if ((await managerPage.getId()) > oldLastUserId) {
       await managerPage.deleteCustomer();
       await expect(managerPage['trLocator']).toHaveCount(
         managerPage['baseCustomerNumber']
@@ -64,4 +64,32 @@ const selectUser = async page => {
   );
 };
 
-export { setupManager, teardownManager, selectUser, customerSetup };
+//Setup transactions customer
+const setupTransactionsCustomer = async browser => {
+  // Create a new context and page
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  // Use setupManager to initialize manager and homepage
+  const setup = await setupManager(page);
+  const managerPage = setup.managerPage;
+
+  // Instantiate the CustomersPage
+  const customersPage = new CustomersPage(page);
+
+  // Perform additional setup
+  await managerPage.openAccount();
+  await customersPage.customerLogin();
+
+  const transactions = new Transactions(page);
+
+  return { context, page, customersPage, managerPage, transactions };
+};
+
+export {
+  setupManager,
+  teardownManager,
+  selectUser,
+  customerSetup,
+  setupTransactionsCustomer,
+};

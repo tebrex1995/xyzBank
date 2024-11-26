@@ -26,6 +26,9 @@ export class CustomersPage extends Homepage {
     this.welcomeHeading = page.locator('strong', {
       hasText: CUSTOMER_PAGE['WELCOME'],
     });
+    this.accNo = page.locator('div.center > strong:nth-child(1)');
+    this.balance = page.locator('div.center > strong:nth-child(2)');
+    this.currency = page.locator('div.center > strong:nth-child(3)');
     //Dropdowns
     this.accountSelect = '#accountSelect';
   }

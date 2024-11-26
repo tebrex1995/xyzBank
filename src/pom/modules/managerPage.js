@@ -132,7 +132,7 @@ export class ManagerPage extends Homepage {
   }
 
   //Get max user ID
-  async getLastUserId() {
+  async getId() {
     const lastUserId = await utils.getDataFromLocalStorage(
       this.page,
       KEYS['MAX_USER_ID']
@@ -180,7 +180,7 @@ export class ManagerPage extends Homepage {
 
   //Assert user creation
   async verifyUserCreating(oldLastUserId) {
-    const newUserId = await this.getLastUserId();
+    const newUserId = await this.getId();
 
     const newCustomer = await this.getLastUser();
 

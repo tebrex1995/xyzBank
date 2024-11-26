@@ -13,6 +13,10 @@ const generateRandomNumber = max => {
   return Math.floor(Math.random() * (max - 1) + 1);
 };
 
+function generateRandomNumberInRange(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 const getDataFromLocalStorage = (page, storageKey) => {
   const customerInfo = page.evaluate(key => {
     const item = window.localStorage.getItem(key);
@@ -38,4 +42,5 @@ export {
   getDataFromLocalStorage,
   lastObjectVal,
   arraysAreEqual,
+  generateRandomNumberInRange,
 };
