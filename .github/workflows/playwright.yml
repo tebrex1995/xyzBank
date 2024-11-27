@@ -21,8 +21,13 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Install Allure CLI
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y allure
+
       - name: Run ESLint
-        run: npx eslint . --ext .js,.ts,.jsx,.tsx
+        run: npx eslint .
         continue-on-error: true
 
       - name: Run Playwright tests
