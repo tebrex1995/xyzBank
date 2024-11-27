@@ -22,9 +22,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Install Allure CLI
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y allure
+        run: npm install -g allure-commandline --save-dev
 
       - name: Run ESLint
         run: npx eslint .
