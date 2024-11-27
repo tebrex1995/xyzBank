@@ -10,7 +10,6 @@ import {
 
 test.describe('Verify manager can create customer successfully', () => {
   let homepage, managerPage, oldLastUserId;
-
   test.beforeEach(
     'Home page should be loaded and manager should be logged in successfully',
     async ({ page }) => {
