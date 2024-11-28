@@ -9,9 +9,9 @@ const CUSTOMER_DATA = {
   },
 
   EXISTING_CUSTOMER: {
-    FIRST_NAME: 'Harry',
-    LAST_NAME: 'Potter',
-    POST_CODE: 'E725JB',
+    FIRST_NAME: 'Hermoine',
+    LAST_NAME: 'Granger ',
+    POST_CODE: 'E859AB',
     ALERT_MESSAGE: ALERTS['DUPLICATE_CUSTOMER'],
   },
 };

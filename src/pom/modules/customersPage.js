@@ -36,10 +36,11 @@ export class CustomersPage extends Homepage {
   //Functional methods
 
   //Login Customer
-  async customerLogin() {
+  async customerLogin(user) {
     await this.loginCheck();
+
     await this.customerLoginBtn.click();
-    await selectUser(this.page);
+    await selectUser(this.page, user);
     await expect(this.loginBtn).toBeVisible();
     await this.loginBtn.click();
   }
@@ -70,7 +71,7 @@ export class CustomersPage extends Homepage {
 
   //Logout customer
   async logoutCustomer() {
-    if (this.loginBtn.isVisible()) {
+    if (this.page.url() === `${ENDPOINTS['LOGGED_CUSTOMER']}`) {
       await this.logoutBtn.click();
     }
   }

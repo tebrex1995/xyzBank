@@ -57,11 +57,10 @@ const customerSetup = async page => {
 };
 
 //Select user from dropdown
-const selectUser = async page => {
-  await page.selectOption(
-    userSelectId,
-    `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
-  );
+const selectUser = async (page, user) => {
+  await page.waitForSelector(userSelectId, { state: 'visible' });
+
+  await page.selectOption(userSelectId, user);
 };
 
 //Setup transactions customer
@@ -79,7 +78,9 @@ const setupTransactionsCustomer = async browser => {
 
   // Perform additional setup
   await managerPage.openAccount();
-  await customersPage.customerLogin();
+  await customersPage.customerLogin(
+    `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
+  );
 
   const transactions = new Transactions(page);
 

@@ -99,7 +99,10 @@ export class ManagerPage extends Homepage {
     this.checkAlertDialog(ALERTS['ACCOUNT_CREATED']);
 
     for (const curr of this.currencies) {
-      await selectUser(this.page);
+      await selectUser(
+        this.page,
+        `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
+      );
       await this.page.selectOption(this.selectCurrencyDropdown, `${curr}`);
       await this.submitCurrencyBtn.click();
       const lastAccNumber = await this.getLastAccount();
@@ -162,20 +165,6 @@ export class ManagerPage extends Homepage {
     await expect(this.customersListBtn).toHaveText(
       MANAGER_PAGE['CUSTOMER_LIST_TEXT']
     );
-  }
-
-  //Assertions of search result
-  async verifySearchResult() {
-    await expect(this.firstNameColumn).toHaveText(
-      CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']
-    );
-    await expect(this.lastNameColumn).toHaveText(
-      CUSTOMER_DATA['VALID_DATA']['LAST_NAME']
-    );
-    await expect(this.postCodeColumn).toHaveText(
-      CUSTOMER_DATA['VALID_DATA']['POST_CODE']
-    );
-    await expect(this.trLocator).toHaveCount(this.oneCustomerFoundTable);
   }
 
   //Assert user creation

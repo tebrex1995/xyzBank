@@ -8,7 +8,7 @@ import {
   teardownManager,
 } from '../fixtures';
 
-test.describe('Verify manager can create customer successfully', () => {
+test.describe('Verify manager can csearch,open account  successfully', () => {
   let homepage, managerPage, oldLastUserId;
   test.beforeEach(
     'Home page should be loaded and manager should be logged in successfully',
@@ -29,7 +29,18 @@ test.describe('Verify manager can create customer successfully', () => {
 
   test('Customer should be able to be found on search bar', async () => {
     await managerPage.searchCustomer(CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']);
-    await managerPage.verifySearchResult();
+    await expect(managerPage.firstNameColumn).toHaveText(
+      CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']
+    );
+    await expect(managerPage['lastNameColumn']).toHaveText(
+      CUSTOMER_DATA['VALID_DATA']['LAST_NAME']
+    );
+    await expect(managerPage['postCodeColumn']).toHaveText(
+      CUSTOMER_DATA['VALID_DATA']['POST_CODE']
+    );
+    await expect(managerPage['trLocator']).toHaveCount(
+      managerPage['oneCustomerFoundTable']
+    );
 
     //Clear search bar
     await managerPage['searchBar'].clear();
@@ -44,6 +55,9 @@ test.describe('Verify manager can create customer successfully', () => {
   });
 
   test('Duplicated customer should not be able to get created', async () => {
-    await managerPage.addCustomer({ alertMsg: ALERTS['DUPLICATE_CUSTOMER'] });
+    const message = await managerPage.addCustomer({
+      alertMsg: ALERTS['DUPLICATE_CUSTOMER'],
+    });
+    expect(true).toBe(true);
   });
 });

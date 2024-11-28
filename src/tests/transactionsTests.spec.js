@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { CUSTOMER_PAGE, setupTransactionsCustomer } from '../fixtures';
+import {
+  CUSTOMER_DATA,
+  CUSTOMER_PAGE,
+  ENDPOINTS,
+  KEYS,
+  setupTransactionsCustomer,
+} from '../fixtures';
+import { getDataFromLocalStorage } from '../fixtures/utils';
 
 test.describe('Verify transactions work as expected', () => {
   let context, page, customersPage, managerPage, transactions;
@@ -12,6 +19,10 @@ test.describe('Verify transactions work as expected', () => {
     customersPage = setup.customersPage;
     managerPage = setup.managerPage;
     transactions = setup.transactions;
+  });
+
+  test.beforeEach('Navigate to customers account page', async () => {
+    page.goto(`${ENDPOINTS['LOGGED_CUSTOMER']}`);
   });
 
   test.afterAll('Close context', async () => {
@@ -49,10 +60,65 @@ test.describe('Verify transactions work as expected', () => {
     await expect(transactions['errorLabel']).toHaveText(
       CUSTOMER_PAGE['TRANSACTION_SUCCESSFULL']
     );
+    await page.waitForLoadState('domcontentloaded');
+
     await expect(customersPage['balance']).toHaveText(difference.toString());
 
     //Check if local storage amounts matches
     const localStorageAmount = await transactions.getAmountFromStorage();
     expect(localStorageAmount).toBe(Number(withdrawValue));
+  });
+
+  test('Should be able to navigate to the transactions page', async () => {
+    await customersPage['transactionsBtn'].click();
+
+    await expect(transactions['backBtn']).toBeVisible();
+    const url = page.url();
+    expect(url).toContain(ENDPOINTS['TRANSACTION_LIST']);
+  });
+
+  test('Should be able to see transactions on the page', async () => {
+    //Navigate to transactions page
+    await customersPage['transactionsBtn'].click();
+    await expect(transactions['backBtn']).toBeVisible();
+
+    const url = page.url();
+    expect(url).toContain(ENDPOINTS['TRANSACTION_LIST']);
+  });
+
+  test('Customer should see transactions in table', async () => {
+    //Make transactions and get info of them
+    const [dates, amounts, types] = await transactions.extractTransactionInfo();
+
+    //Reload page so that elements appear in table
+    await transactions.visitTransactionsList();
+
+    await expect(page).toHaveURL(ENDPOINTS['TRANSACTION_LIST']);
+    //Compare
+    const tableRow = transactions['tableRow'];
+
+    for (let i = 0; i < (await dates.length); i++) {
+      const row = tableRow.nth(i);
+
+      await expect(row.locator('td').nth(0)).toHaveText(dates[i]);
+      await expect(row.locator('td').nth(1)).toHaveText(amounts[i].toString());
+      await expect(row.locator('td').nth(2)).toHaveText(types[i]);
+    }
+  });
+  test('Transaction lis should be able to get reset', async () => {
+    //Make transactions and get info of them
+    const [dates, amounts, types] = await transactions.extractTransactionInfo();
+
+    //Reload page so that elements appear in table
+    await transactions.visitTransactionsList();
+
+    await expect(page).toHaveURL(ENDPOINTS['TRANSACTION_LIST']);
+
+    //Reset transactions
+    await transactions['resetBtn'].click();
+
+    const tableRow = transactions['tableRow'];
+
+    expect(await tableRow.count()).toBe(0);
   });
 });

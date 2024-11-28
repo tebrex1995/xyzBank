@@ -1,0 +1,44 @@
+[
+  {
+    date: '2024-11-28T12:43:58.259Z',
+    amount: 770,
+    deposit: true,
+    success: true,
+    type: 'Credit'
+  },
+  {
+    date: '2024-11-28T12:43:58.758Z',
+    amount: 606,
+    withdrawl: true,
+    success: true,
+    type: 'Debit'
+  },
+  {
+    date: '2024-11-28T12:43:58.873Z',
+    amount: 770,
+    deposit: true,
+    success: true,
+    type: 'Credit'
+  },
+  {
+    date: '2024-11-28T12:43:58.992Z',
+    amount: 485,
+    withdrawl: true,
+    success: true,
+    type: 'Debit'
+  },
+  {
+    date: '2024-11-28T12:43:59.106Z',
+    amount: 770,
+    deposit: true,
+    success: true,
+    type: 'Credit'
+  },
+  {
+    date: '2024-11-28T12:43:59.224Z',
+    amount: 485,
+    withdrawl: true,
+    success: true,
+    type: 'Debit'
+  }
+]

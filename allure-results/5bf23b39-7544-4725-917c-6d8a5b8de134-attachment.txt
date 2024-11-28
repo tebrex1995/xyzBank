@@ -1,0 +1,7 @@
+{
+  accountNo: 1016,
+  currency: 'Dollar',
+  userId: '6',
+  date: '2024-11-28T11:05:05.800Z',
+  amount: 0
+}

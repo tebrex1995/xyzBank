@@ -36,6 +36,41 @@ function arraysAreEqual(arr1, arr2) {
   return arr1.every((value, index) => value === arr2[index]);
 }
 
+function formatToCustomDateTime(isoString) {
+  const date = new Date(isoString);
+
+  // Array of month names
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  // Extract parts of the date
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert hours to 12-hour format
+  hours = hours % 12 || 12;
+
+  // Format the final string
+  return `${month} ${day}, ${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+}
+
 export {
   generateRandomNumber,
   generateRandomString,
@@ -43,4 +78,5 @@ export {
   lastObjectVal,
   arraysAreEqual,
   generateRandomNumberInRange,
+  formatToCustomDateTime,
 };

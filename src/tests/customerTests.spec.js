@@ -28,7 +28,9 @@ test.describe('Verify customer can login and make accounts', () => {
   });
 
   test('Customer should be able to login', async () => {
-    await customersPage.customerLogin();
+    await customersPage.customerLogin(
+      `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
+    );
     const loggedUser = await customersPage.getCurrentUser();
 
     expect(await loggedUser['fName']).toBe(
@@ -47,7 +49,9 @@ test.describe('Verify customer can login and make accounts', () => {
   });
 
   test('Customer should get appropriate message if he has no accounts', async () => {
-    await customersPage.customerLogin();
+    await customersPage.customerLogin(
+      `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
+    );
 
     await expect(customersPage['welcomeHeading']).toBeVisible();
     await expect(customersPage['nameHeading']).toHaveText(
@@ -63,13 +67,21 @@ test.describe('Verify customer can login and make accounts', () => {
   }) => {
     await page.goto(ENDPOINTS['OPEN_ACCOUNT']);
     await managerPage.openAccount();
-    await customersPage.customerLogin();
-    await customersPage.verifyLoginWithAccount();
+
+    await customersPage.customerLogin(
+      `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
+    );
+
+    await expect(customersPage['depositBtn']).toBeVisible();
+    await expect(customersPage['withdrawBtn']).toBeVisible();
+    await expect(customersPage['transactionsBtn']).toBeVisible();
   });
 
   test('Customer should have added accounts in account select dropdown', async () => {
     await managerPage.openAccount();
-    await customersPage.customerLogin();
+    await customersPage.customerLogin(
+      `${CUSTOMER_DATA['VALID_DATA']['FIRST_NAME']} ${CUSTOMER_DATA['VALID_DATA']['LAST_NAME']}`
+    );
 
     const accountsMatch = await customersPage.compareOptionsWithLocalStorage();
     expect(accountsMatch).toBe(true);
