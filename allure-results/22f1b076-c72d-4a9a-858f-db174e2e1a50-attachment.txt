@@ -1,1 +1,0 @@
-locator('#anchor0 .ng-binding').first()

@@ -1,10 +1,6 @@
 import { CustomersPage, ManagerPage } from '../modules';
 import { KEYS, utils, TRANSACTIONS, CUSTOMER_PAGE } from '../../fixtures';
 import { expect } from '@playwright/test';
-import {
-  generateRandomNumber,
-  generateRandomNumberInRange,
-} from '../../fixtures/utils';
 
 export class Transactions extends CustomersPage {
   constructor(page) {
@@ -39,17 +35,19 @@ export class Transactions extends CustomersPage {
     await this.depositBtn.click();
     await this.amountInputField.fill(stringedDepositValue);
     await this.submitBtn.click();
+
     return depositValue;
   }
 
   async withdraw() {
     const value = TRANSACTIONS['LOWER_DEPOSIT_VALUE'];
+    const stringedValue = value.toString();
     await this.withdrawBtn.click();
     await expect(this.withdrawLabel).toHaveText(
       CUSTOMER_PAGE['WITHDRAW_LABEL']
     );
 
-    await this.amountInputField.fill(value.toString());
+    await this.amountInputField.fill(stringedValue);
     await this.submitBtn.click();
     return value;
   }
@@ -104,8 +102,10 @@ export class Transactions extends CustomersPage {
   }
 
   async getLastTransaction() {
-    const allTransactions = this.getAllTransactions();
-    const lastTransaction = await allTransactions[allTransactions.length - 1];
+    const allTransactions = await this.getAllTransactions();
+    const lastTransaction = await allTransactions[
+      (await allTransactions.length) - 1
+    ];
     //Return last transaction
     return lastTransaction;
   }
